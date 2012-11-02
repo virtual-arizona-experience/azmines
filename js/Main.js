@@ -2,7 +2,7 @@ function init(){
 	var map = new L.Map("map");
 	
 	/* Tilestream Layer example: */
-	var historicUrl = "http://opengis.azexperience.org/tiles/v2/azHistoric1880/{z}/{x}/{y}.png",
+	var historicUrl = "/tiles/v2/azHistoric1880/{z}/{x}/{y}.png",
 		historicLayer = new L.TileLayer(historicUrl, {maxZoom: 10}); 
 	
 	/* ESRI tiled service example: */
@@ -26,7 +26,7 @@ function init(){
 	var bingLayer = new L.TileLayer.Bing(<<Bing Maps API Key>>, "Road"); */
 	
 	/* WMS layer example: */
-	var wmsUrl = "http://opengis.azexperience.org/geoserver/wms",
+	var wmsUrl = "/geoserver/wms",
 		wmsLayer = new L.TileLayer.WMS(wmsUrl, { 
 			maxZoom: 10, 
 			layers: "vae:azmines", 
@@ -95,7 +95,7 @@ function init(){
 	
 
 	/* WFS GeoJSON layer example: */
-	var wfsLayer = new L.GeoJSON.WFS("http://opengis.azexperience.org/geoserver/wfs", "vae:azmines", {
+	var wfsLayer = new L.GeoJSON.WFS("/geoserver/wfs", "vae:azmines", {
 		pointToLayer: function(latlng) { return new L.Marker.AttributeFilter(latlng, "commodity", { rules: symbolRules }); },
 		popupObj: new JadeContent("templates/example.jade"),
 		popupOptions: { maxWidth: 530, centered: true },
