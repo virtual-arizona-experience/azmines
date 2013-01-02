@@ -5,6 +5,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<link rel="stylesheet" type="text/css" href="style/leaflet.css" />
 		<link rel="stylesheet/less" type="text/css" href="style/hover.less" />
+		<link rel="stylesheet" type="text/css" href="style/legend.css" />
 		<script type="text/javascript" src="js/lib/leaflet-custom.js"></script>
 		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="js/lib/less-1.2.2.min.js"></script>
@@ -21,6 +22,17 @@
 		<script type="text/javascript" src="js/Main.js"></script>
 	</head>
 	<body onload="init()">
-		<div id="map" style="height: 760px;"></div>		
+		<div id="map" style="height: 760px;"></div>
+		<div id="acert-legend">
+		<strong>Mine Type</strong> </br>
+		<img src="style/images/copper.png" align="absmiddle" style="margin: 2px;" title="copper" >
+		<img src="style/images/coppermoly.png" align="absmiddle" style="margin: 2px;" title="copper & molybdenum" >
+		<img src="style/images/gold.png" align="absmiddle" style="margin: 2px;" title="gold" >
+		<img src="style/images/uranium.png" align="absmiddle" style="margin: 2px;" title="uranium" >
+		<img src="style/images/cement.png" align="absmiddle" style="margin: 2px;" title="cement" >
+		<img src="style/images/coal.png" align="absmiddle" style="margin: 2px;" title="coal" >
+		<img src="style/images/lime.png" align="absmiddle" style="margin: 2px;" title="lime" > 
+		</br>  <i>hover over icon for description</i> 
+		</div>			
 	</body>
 </html>
