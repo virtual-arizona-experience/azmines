@@ -1,4 +1,5 @@
 #popup-content
-	h3#popup-title= name + " (" + commodity + ")"
+	h3#popup-title
+		a(href= companyurl)= name + " (" + commodity + ")"
 	#description-container!= media
 	
