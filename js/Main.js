@@ -1,113 +1,131 @@
+/**
+ * Author: Genhan Chen
+ * Email: genhan.chen@azgs.az.gov
+ */
+
+var map, searchControl, facilitiesFilterControl;
 function init(){
-	var map = new L.Map("map");
-	
-	/* Tilestream Layer example: */
-	var landshadeUrl = "/tiles/v2/landShade/{z}/{x}/{y}.png",
-		landshade = new L.TileLayer(landshadeUrl, {maxZoom: 12}); 
-	
-	/* ESRI tiled service example: */
-	/* var natGeoLayer = new L.TileLayer.ESRI("http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer");*/
-	//var worldTransportation = new L.TileLayer.ESRI("http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer");
-	//var worldImagery = new L.TileLayer.ESRI("http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer");
-	//var worldBoundaries = new L.TileLayer.ESRI("http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer");
+	map = new L.Map("map", {
+		minZoom: 7,
+		maxZoom: 12,
+		maxBounds: new L.LatLngBounds(new L.LatLng(29, -118), new L.LatLng(39, -104)) 
+	});
 	
 	// Cloudmade / OpenStreetMap tiled layer
 	/*var cmUrl = 'http://{s}.tile.cloudmade.com/f7d28795be6846849741b30c3e4db9a9/997/256/{z}/{x}/{y}.png',
-		cmAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+		cmAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery ï¿½ <a href="http://cloudmade.com">CloudMade</a>',
 		cmOptions = { maxZoom: 18, attribution: cmAttribution };
+	var cloudmade = new L.TileLayer(cmUrl, cmOptions);*/
 	
-	var cloudmade = new L.TileLayer(cmUrl, cmOptions);//, {styleId: 999});*/
-	
-	/*set opacity*/
-	//worldTransportation.setOpacity(0.5)
-	//worldBoundaries.setOpacity(1)
-	
-	/* Bing maps example: 
-	var bingLayer = new L.TileLayer.Bing(<<Bing Maps API Key>>, "Road"); */
-	
-	/* WMS layer example: */
-	var wmsUrl = "/geoserver/wms",
+	// Basemap
+	var basemapUrl = "/tiles/v2/landShade/{z}/{x}/{y}.png";
+		basemapAttribution = 'Map compilation: <a href="http://www.azgs.az.gov/" target="_blank">AZGS</a>' 
+//			+ '&nbsp;Contributors: <a href="http://www.azgs.az.gov/">AZGS</a>, <a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC-BY-SA</a>',
+		basemapOptions = { attribution: basemapAttribution };
+	var basemap = new L.TileLayer(basemapUrl, basemapOptions);
+
+	/* WMS layer */
+	var wmsUrl = "/geoserver/wms";
 		wmsLayer = new L.TileLayer.WMS(wmsUrl, { 
-			maxZoom: 10, 
-			layers: "vae:azmines", 
+			layers: "vae:usa", 
 			format: "image/png", 
 			transparent: true 
 		}); 
-	/**/
 	
-		var symbolRules = {
-		"Copper": new L.Icon({
-			iconUrl: "style/images/copper.png",
-			iconSize: new L.Point(24,24),
-			//shadowUrl: "style/images/azpark-shadow.png",
-			//shadowSize: new L.Point(iconHeight * (258/454),iconHeight)
-		}),
+	var center = new L.LatLng(34.1618, -110.7);
+	
+	map.setView(center, 7).addLayer(basemap).addLayer(wmsLayer);
+	
+	//map.addLayer(wfsLayer);
+	
+	/** Add search control **/
+	searchControl = new L.Control.Search({
+		highlightSymbolUrl: "style/images/info.png"
+	});
+	map.addControl(searchControl);
+	searchControl.showPopup();
+	
+	/// Add facility filter control
+	facilitiesFilterControl = new L.Control.Filter([{category : "Rock Products", items : agencyItems}],
+	                                               /*   {category : "Art & Culture", items : artCultureItems},
+	                                                  {category : "Accessibility", items : accessItems}, 
+	          	                                      {category : "Information", items : infoItems}, 
+	          	                                      {category : "Sites with Camping", items : campingItems}, 
+	          	                                      {category : "Facilities", items : facilitiesItems}, 
+	          	                                      {category : "Sites with Trails", items : trailsItems}, 
+	          	                                      {category : "Natural History", items : naturalHistoryItems}, 
+	          	                                      {category : "Water Sports", items : waterSportsItems}],*/
+	          	                                      {toolClear: true});
+	map.addControl(facilitiesFilterControl);
+	facilitiesFilterControl._control.click()
+
+	/** Add the art and cultural filter
+	var artcultureFilterControl = new L.Control.Filter([{category : "Art & Culture", items : artCultureItems}],
+			{icon: "url('style/images/tools/arts-culture.png')",
+			toolClear: true});
+	map.addControl(artcultureFilterControl);**/	
+	
+	/// Add a single filter control for AOT
+	/*var aotControl = new L.Control.Layer({fName: "agency", value: "'AOT'"},{
+		icon: "url('style/images/tools/partners.png')",
+		activeIcon: "url('style/images/tools/activePartners.png')",
+		toolTip: "Designated Arizona Tourist Information"
+	});
+	map.addControl(aotControl);*/
+	
+	/// Add map events
+	map.on("layeradd", function(e){
+		searchControl.setAutocompleteItems([//(artcultureFilterControl.layer || null), 
+		                                    (facilitiesFilterControl.layer || null)], 
+		                                    "name");
+	});
+	
+	map.on("popupopen", function(e){
+		searchControl.hidePopup();
+		//artcultureFilterControl.hidePopup();
+		facilitiesFilterControl.hidePopup();
 		
-		"Copper, Molybdenum": new L.Icon({
-			iconUrl: "style/images/coppermoly.png",
-			iconSize: new L.Point(24,24),
-			//shadowUrl: "style/images/azpark-shadow.png",
-			//shadowSize: new L.Point(iconHeight * (258/454),iconHeight)
-		}),
+		this._reopen = false;
 		
-		"Gold": new L.Icon({
-			iconUrl: "style/images/gold.png",
-			iconSize: new L.Point(24,24),
-			//shadowUrl: "style/images/azpark-shadow.png",
-			//shadowSize: new L.Point(iconHeight * (258/454),iconHeight)
-		}),
+		/**************************************************************/
+		/***Add link redirection for 'View Page'***********************/
+		/***this._resetPopup = jQuery.extend({}, e.popup);*************/
+		/*var linkInPopup = document.getElementById("view-page");
 		
-		"Uranium": new L.Icon({
-			iconUrl: "style/images/uranium.png",
-			iconSize: new L.Point(24,24),
-			//shadowUrl: "style/images/azpark-shadow.png",
-			//shadowSize: new L.Point(iconHeight * (258/454),iconHeight)
-		}),
-		
-		"Lime": new L.Icon({
-			iconUrl: "style/images/lime.png",
-			iconSize: new L.Point(24,24),
-			//shadowUrl: "style/images/azpark-shadow.png",
-			//shadowSize: new L.Point(iconHeight * (258/454),iconHeight)
-		}),
-		
-		"Cement": new L.Icon({
-			iconUrl: "style/images/cement.png",
-			iconSize: new L.Point(24,24),
-			//shadowUrl: "style/images/azpark-shadow.png",
-			//shadowSize: new L.Point(iconHeight * (258/454),iconHeight)
-		}),
-		
-		"Coal": new L.Icon({
-			iconUrl: "style/images/coal.png",
-			iconSize: new L.Point(24,24),
-			//shadowUrl: "style/images/azpark-shadow.png",
-			//shadowSize: new L.Point(iconHeight * (258/454),iconHeight)
-		}),
+		L.DomEvent.addListener(linkInPopup, 'click', function(evt) {
+			var url = ''
+				if ($.browser.msie && $.browser.version.substring(0,2) == '8.') {
+				url = evt.srcElement.getAttribute("url");
+				} else {
+				url = evt.target.getAttribute("url");
+				}
+
 			
-	};
-	
+			/***********************************************************
+			var goBack = L.DomUtil.create("span", "popup-link-back");
+			L.DomEvent.addListener(goBack, 'click', function(evt){
+				this._reopen = true;
+				this.closePopup();				
+			}, this)
+			
+			
+			this._popup._container.appendChild(goBack);
+			***********************************************************/
+			
+		/*	var linkPage = L.DomUtil.create("iframe", "acert-link-frame");
+			linkPage.style.width = "900px";
+			linkPage.style.height = "520px";
+			linkPage.style.marginTop = "15px";
+			linkPage.src = url;
+			
+			this._popup.setContent(linkPage);
+		/**************************************************************/	
+		}, this);		
+	//});	
+}
 
-	/* WFS GeoJSON layer example: */
-	var wfsLayer = new L.GeoJSON.WFS("/geoserver/wfs", "vae:azmines", {
-		pointToLayer: function(latlng) { return new L.Marker.AttributeFilter(latlng, "commodity", { rules: symbolRules }); },
-		popupObj: new JadeContent("templates/example.jade"),
-		popupOptions: { maxWidth: 530, centered: true },
-		hoverFld: "name"
-	}); 
-	
-	var center = new L.LatLng(34.1618, -111.53332);
-	map.setView(center, 7);
-	map.addLayer(wfsLayer);
-	map.addLayer(landshade);
-
-	
-	/*setTimeout(function() { 
-		map.addLayer(worldBoundaries);
-		setTimeout(function() {
-			map.addLayer(worldTransportation);
-		}, 250)
-	}, 250)*/
-	
-	
-	}
+/**********************************************************************/
+/***Get google direction for the clicked location**********************/
+function goGoogleDirection(strQuery){
+	window.open(" http://maps.google.com?q=" + strQuery);
+}

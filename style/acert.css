@@ -1,0 +1,229 @@
+/*
+ * Author: Genhan Chen
+ * Email: genhan.chen@azgs.az.gov
+ */
+.leaflet-control-attribution {
+	text-align: right;
+}
+
+/* Define hover tips style*/
+.media-content iframe {
+	width: 500px;
+}
+.custom-hover {
+}
+.custom-control-hover-label {
+	color: #DDD;
+	font-weight: bold;
+	font-size: 12px;
+	/*-ms-filter: "progid:DXImageTransform.Microsoft.Glow(Strength=1, Color=#FFFFFF)";
+	text-shadow: -1px -1px 1px white, 1px 1px 1px white;*/
+	font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	background-color: #555;
+	padding: 4px;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border: 1px black solid;
+}
+/* Define popup style*/
+#acert-popup-content td {
+	vertical-align: top;
+}
+
+#attributes-container img {
+	width: 16px;
+	height: 16px;
+	padding: 3px;
+}
+
+.td-title {
+	font-weight: bold;
+	font-size: small;
+	color:  #9DDD3E;
+}
+.td-content {
+}
+
+.leaflet-popup-content-wrapper {
+	background-color: #555;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Glow(Strength=2, Color=#FFFFFF)";
+	box-shadow: -1px -1px 1px black, 1px 1px 1px black;
+}
+.leaflet-popup-close-button {
+	background: url("images/tools/collapse.png") transparent no-repeat;
+	width: 16px;
+	height: 16px;
+	background-size: 12px 12px;
+	margin: 5px 0px 0px 0px;
+}
+.leaflet-popup-content {
+	margin: 12px;
+}
+.popup-title {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	color: #ddd !important;
+	display: block;
+	font-size: 1.25em;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.popup-link-back {
+	float: left;
+	position: absolute;
+	top: 9px;
+	left: 14px;
+	background: url("images/tools/refresh.png") transparent no-repeat;
+	width: 20px;
+	height: 20px;
+	background-size: 12px 12px;
+	margin: 5px 0px 0px 0px;
+	cursor: pointer;
+}
+
+/*
+ * Change jQuery ui
+ * */
+.ui-menu {
+	font-size: 12px !important;
+	width: 220px !important;
+	
+}
+
+/*
+ * Style for filter popup
+ * */
+.acert-control-filter a {
+	background-size: 30px 30px;
+}
+
+.acert-control-filter form {
+	padding: 0px 0px 10px 0px;
+	width:230px!important;
+}
+
+.acert-control-filter-group {
+	border: 1px solid #ddd;
+	margin: 2px 10px 0px 10px;
+	padding: 3px 0px 0px 0px;
+	max-height: 600px;
+	border-radius: 7px;
+	-webkit-border-radius: 7px;
+}
+
+.acert-control-filter-group-name {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-weight:bold;
+	color: #eee;
+	position: relative;
+	top: 10px;
+	left: 25px;
+	background-color: #555	;
+	padding: 0px 5px;
+	font-size: 12px;	
+}
+
+/*
+ * Style for search function
+ * */
+.acert-control-search a {
+	background-image: url("images/tools/search.png") !important;
+	background-size: 30px 30px;
+}
+
+.acert-control-search-items {
+	height: 30px;
+	padding: 2px 0px 0px 5px;
+}
+
+.acert-control-search-input {
+	-webkit-border-radius: 7px;
+	border-radius: 7px;
+	margin: 2px 0px 0px 0px;
+	width: 144px;
+	float: left;
+	font-style: italic;
+}
+
+.acert-control-search-icon {
+	background: url("images/tools/searchmini.png") no-repeat;
+	background-size: 12px 12px;
+	background-position: center;
+	float: right;
+	margin: 3px 5px;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;	
+}
+
+.acert-control-search-expanded {
+	padding: 3px 10px 3px 5px;
+	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	color: #333;
+	background: #fff;	
+}
+
+/*
+ * Common used css
+ * */
+.acert-control, .acert-control-form {
+	-moz-box-shadow: 0 0 7px #999;
+	-webkit-box-shadow: 0 0 7px #999;
+	box-shadow: 0 0 7px #999;
+	background: #555;
+	-webkit-border-radius: 7px;
+	border-radius: 7px;
+}
+
+.acert-control-tools {
+	display: inline-block !important;
+	cursor: pointer;
+}
+
+.acert-control-show {
+	display: block;
+}
+
+.acert-control-hide {
+	display: none;
+}
+
+.acert-control-icon {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	width: 30px;
+	height: 30px;
+}
+
+.acert-control-clear {
+	background: url("images/tools/clear.png") no-repeat;
+	background-size: 12px 12px;
+	background-position: center;
+	float: right;
+	margin: 3px 5px;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;	
+}
+
+.acert-control-reset {
+	background: url("images/tools/refresh.png") no-repeat;
+	background-size: 12px 12px;
+	background-position: center;
+	float: right;
+	margin: 3px 5px;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;	
+}
+
+.acert-control-close {
+	background: url("images/tools/collapse.png") no-repeat;
+	background-size: 12px 12px;
+	background-position: center;
+	float: right;
+	margin: 3px 5px;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+}

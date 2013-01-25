@@ -1,38 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>AZGS Leaflet App</title>
+		<title>Arizona Active Mines</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" value="IE=9">
 		<link rel="stylesheet" type="text/css" href="style/leaflet.css" />
-		<link rel="stylesheet/less" type="text/css" href="style/hover.less" />
+		<link rel="stylesheet" type="text/css" href="style/acert.css" />
 		<link rel="stylesheet" type="text/css" href="style/legend.css" />
+		<!--Added by Genhan-->
+		<link rel="stylesheet" type="text/css" href="style/jquery-ui/jquery-ui-1.8.21.custom.css" />
+		<!--Added by Genhan-->
+		<link rel="stylesheet" type="text/css" href="style/leaflet.ie.css" />
 		<script type="text/javascript" src="js/lib/leaflet-custom.js"></script>
-		<script type="text/javascript" src="js/lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="js/lib/jquery-1.7.2.min.js"></script>
+		<!--Changed by Genhan-->
+		<script type="text/javascript" src="js/lib/jquery-ui-1.8.21.custom.min.js"></script>
+		<!--Added by Genhan-->
 		<script type="text/javascript" src="js/lib/less-1.2.2.min.js"></script>
 		<script type="text/javascript" src="js/lib/jade.js"></script>
 		<script type="text/javascript" src="js/lib/proj4js-1.0.3/lib/proj4js-compressed.js"></script>
-		<script type="text/javascript" src="js/azgs-leaflet/TileLayer.Bing.js"></script>
-		<script type="text/javascript" src="js/azgs-leaflet/TileLayer.ESRI.js"></script>
 		<script type="text/javascript" src="js/azgs-leaflet/GeoJSON.WFS.js"></script>
 		<script type="text/javascript" src="js/azgs-leaflet/Popup.Centered.js"></script>
-		<script type="text/javascript" src="js/azgs-leaflet/Control.Hover.js"></script>		
+		<script type="text/javascript" src="js/azgs-leaflet/Control.Hover.js"></script>
 		<script type="text/javascript" src="js/azgs-leaflet/Marker.AttributeFilter.js"></script>
 		<script type="text/javascript" src="js/azgs-leaflet/JadeContent.js"></script>
-		<script type="text/javascript" src="js/azgs-leaflet/DateFilter.js"></script>		
+		<script type="text/javascript" src="js/azgs-leaflet/Filter.js"></script>
+		<script type="text/javascript" src="js/azgs-leaflet/Control.Filter.js"></script>
+		<script type="text/javascript" src="js/azgs-leaflet/Control.Layer.js"></script>
+		<script type="text/javascript" src="js/azgs-leaflet/Control.Search.js"></script>
 		<script type="text/javascript" src="js/Main.js"></script>
+		<script type="text/javascript" src="js/FilterJSON.js"></script>
 	</head>
 	<body onload="init()">
-		<div id="map" style="height: 760px;"></div>
-		<div id="acert-legend">
-		<strong>Mine Type</strong> </br>
-		<img src="style/images/copper.png" align="absmiddle" style="margin: 2px;" title="copper" >
-		<img src="style/images/coppermoly.png" align="absmiddle" style="margin: 2px;" title="copper & molybdenum" >
-		<img src="style/images/gold.png" align="absmiddle" style="margin: 2px;" title="gold" >
-		<img src="style/images/uranium.png" align="absmiddle" style="margin: 2px;" title="uranium" >
-		<img src="style/images/cement.png" align="absmiddle" style="margin: 2px;" title="cement" >
-		<img src="style/images/coal.png" align="absmiddle" style="margin: 2px;" title="coal" >
-		<img src="style/images/lime.png" align="absmiddle" style="margin: 2px;" title="lime" > 
-		</br>  <i>hover over icon for description</i> 
-		</div>			
+		<div id="map" style="height: 760px; width: 1000px;"></div>
+        <div id="acert-legend">
+			<ul class='legend-labels'>
+            <font color="#FFFFFF">&nbsp;Hover over and click map icons to display site information; use search tool to locate specific site; use filter to limit sites displayed on map</font>
+		</div>
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-33930890-1']);
+			_gaq.push(['_trackPageview']);
+			
+			(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();		
+		</script>
+
 	</body>
 </html>

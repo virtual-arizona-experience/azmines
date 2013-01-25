@@ -1,28 +1,60 @@
+/*
+ * Author: Ryan Clark
+ * Email: ryan.clark@azgs.az.gov
+ * 
+ * Author: Genhan Chen
+ * Email: genhan.chen@azgs.az.gov
+ */
+
 L.GeoJSON.WFS = L.GeoJSON.extend({
 	initialize: function(serviceUrl, featureType, options) {
 		options = options || {};
 		L.GeoJSON.prototype.initialize.call(this, null, options);
 		
-		var wfsVersion = options.wfsVersion || "1.1.0";
+		var wfsVersion = options.wfsVersion || "1.0.0";
 		this.getFeatureUrl = serviceUrl + "?request=GetFeature&outputformat=json&version=" + wfsVersion + "&typeName=" + featureType;
-		if (options.filter && options.filter instanceof DateFilter) { this.getFeatureUrl += "&CQL_FILTER=" + filter.cql; }
+
+		if (options.filter && options.filter.cql) { this.getFeatureUrl += "&CQL_FILTER=" + options.filter.cql; }
+		else if (options.filter) { this.getFeatureUrl += "&" + options.filter; }
 		
 		this.on("featureparse", function(e) {
-			if (e.geometryType != 'Point' && e.geometryType != 'MultiPoint') {
-				if (options.style) {
-					e.layer._originalStyle = options.style;
-					e.layer.setStyle(options.style);
-				} else if (options.filteredStyles) {
-					var fld = options.filteredStyles.propName;
-					var itemVal = e.properties[fld];
-					var style = L.Util.extend({}, options.filteredStyles['default'], options.filteredStyles.styles[itemVal]); 
-					e.layer._originalStyle = style;
-					e.layer.setStyle(style);
+			
+			//*Set default icon url and highlight icon url********************************************/
+			/// The function to parse icon url
+			var parseIconUrl = function(/*url string needs to be parsed*/url){
+				if(!url) {return ;}
+				
+				if(url.split("?").length == 3) { ///If the the iconUrl contains two parameters (with '?')
+					var baseUrl = url.split("?")[0];
+					var imgName = e.properties[url.split("?")[1]].replace(/\s/g, "") + "." + url.split("?")[2];
+					url = baseUrl + imgName;	
 				}
+				
+				return url;
+			};
+			
+			/// Apply the parseUrl function
+			if(e.layer.hasOwnProperty("options")){
+				if (e.layer.options.hasOwnProperty("icon")) {
+					if(e.layer.options.icon.hasOwnProperty("options")) {
+						e.layer.options.icon.options.iconUrl = parseIconUrl(e.layer.options.icon.options.iconUrl);
+						if(e.layer.options.icon.options.iconHighlightUrl){
+							e.layer.options.icon.options.iconHighlightUrl = parseIconUrl(e.layer.options.icon.options.iconHighlightUrl);
+						}							
+					}					
+				}		
 			}
+			//****************************************************************************************/
+			//****************************************************************************************/
+			
 			if (options.popupObj && options.popupOptions) {
 				e.layer.on("click", function(evt) {
-					e.layer._map.openPopup(options.popupObj.generatePopup(e, options.popupOptions));
+					if (e.layer._hoverControl._map){
+						e.layer._hoverControl._map.removeControl(e.layer._hoverControl);
+					}
+					
+					var popup = options.popupObj.generatePopup(e, options.popupOptions);
+					e.layer._map.openPopup(popup);
 					if (options.popupFn) { options.popupFn(e); }
 				});			
 			}
@@ -30,23 +62,34 @@ L.GeoJSON.WFS = L.GeoJSON.extend({
 				e.layer.bindPopup(e.properties[options.popupFld], { maxWidth: 600 });
 			}
 			if (options.hoverObj || options.hoverFld) {
-				e.layer.on("mouseover", function(evt) {
+				e.layer.on("mouseover", function(evt) {				
+					//********************************************************************************/
+					/// Set the highlight symbol
+					if(this.options.icon.options.iconHighlightUrl){
+						this._icon.src = this.options.icon.options.iconHighlightUrl;
+						this._icon.style.width = this.options.icon.options.iconSize.x * 2 + "px";
+						this._icon.style.height = this.options.icon.options.iconSize.x * 2 + "px";						
+					}
+					//********************************************************************************/					
+					
 					hoverContent = options.hoverObj ? options.hoverObj.generateContent(e) : e.properties[options.hoverFld] || "Invalid field name" ;
-					hoverPoint = e.layer._map.latLngToContainerPoint(evt.target._latlng);
+					hoverPoint = e.layer._map.latLngToContainerPoint(e.layer._latlng);
 					e.layer._hoverControl = new L.Control.Hover(hoverPoint, hoverContent);
 					e.layer._map.addControl(e.layer._hoverControl);	
 				});
 				e.layer.on("mouseout", function(evt) {
-					e.layer._map.removeControl(e.layer._hoverControl);
-				});
-			}
-			if (options.hoverColor) {
-				e.layer.on("mouseover", function(evt) {
-					var hoverStyle = L.Util.extend({}, e.layer._originalStyle, { stroke: true, color: options.hoverColor, weight: 3 });
-					e.layer.setStyle(hoverStyle);
-				});
-				e.layer.on("mouseout", function(evt) {
-					e.layer.setStyle(e.layer._originalStyle);
+					//********************************************************************************/
+					/// Remove the highlight symbol
+					if (e.layer.options.icon.options.iconHighlightUrl){
+						this._icon.src = this.options.icon.options.iconUrl;
+						
+						this._icon.style.width = this.options.icon.options.iconSize.x + "px";
+						this._icon.style.height = this.options.icon.options.iconSize.x + "px";						
+					}
+					//********************************************************************************/	
+					if (e.layer._hoverControl._map){
+						e.layer._hoverControl._map.removeControl(e.layer._hoverControl);
+					}					
 				});
 			}
 			if (e.layer instanceof L.Marker.AttributeFilter) { e.layer.setIcon(e); }
@@ -69,39 +112,10 @@ L.GeoJSON.WFS = L.GeoJSON.extend({
 			success: function(response) {
 				if (response.type && response.type == "FeatureCollection") {
 					that.jsonData = response;
-					that.toGeographicCoords(that.options.inputCrs || "EPSG:900913");
 					callback();
 				}				
 			},
 			dataType: "json"
 		});
-	},
-	
-	toGeographicCoords: function() {
-		function projectPoint(coordinates /* [x,y] */, inputCrs) {
-			var source = new Proj4js.Proj(inputCrs || "EPSG:900913"),
-				dest = new Proj4js.Proj("EPSG:4326"),
-				x = coordinates[0], 
-				y = coordinates[1],
-				p = new Proj4js.Point(x,y);
-			Proj4js.transform(source, dest, p);
-			return [p.x, p.y];
-		}
-		
-		features = this.jsonData.features || [];
-		for (var f = 0; f < features.length; f++) {
-			switch (features[f].geometry.type) {
-				case "Point":
-					projectedCoords = projectPoint(features[f].geometry.coordinates);
-					features[f].geometry.coordinates = projectedCoords;
-					break;
-				case "MultiPoint":
-					for (var p = 0; p < features[f].geometry.coordinates.length; p++) {
-						projectedCoords = projectPoint(features[f].geometry.coordinates[p]);
-						features[f].geometry.coordinates[p] = projectedCoords;
-					}
-					break;
-			}
-		}
 	}
 });

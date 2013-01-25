@@ -6,17 +6,20 @@ L.Popup.Centered = L.Popup.extend({
 		options.className += "centered-popup";
 		L.Popup.prototype.initialize.call(this, options, source);
 	},
-	
+
 	_initLayout: function() {
 		L.Popup.prototype._initLayout.call(this);
 		this._container.removeChild(this._tipContainer);
+				/// Make the filter control/popup draggable	  =
 	},
-	
+
 	_updatePosition: function() {
 		var mapSize = this._map.getSize(),
-			pos = this._map.containerPointToLayerPoint(new L.Point(Math.round(mapSize.x / 2),Math.round(mapSize.y * 0.15)));
+		pos = this._map.containerPointToLayerPoint(new L.Point(Math.round(mapSize.x / 2),Math.round(mapSize.y / 2)));
+	
+		this._containerHeight = this._container.clientHeight;
 		
-		this._containerTop = pos.y - this.options.offset.y;
+		this._containerTop = pos.y - Math.round(this._containerHeight / 2) - this.options.offset.y;
 		this._containerLeft = pos.x - Math.round(this._containerWidth / 2) + this.options.offset.x;
 		
 		this._container.style.top = this._containerTop + 'px';

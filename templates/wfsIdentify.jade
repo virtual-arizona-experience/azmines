@@ -1,0 +1,22 @@
+#acert-popup-content(style="width:500px;")
+	#title-link.popup-title(style="text-decoration: none;")= props.name
+	if props.media
+		.media-content(style="padding:5px 0px;")!= props.media	
+	table#attributes-container
+		tr
+			td(style="width:300px;")
+				table(style="color:#ddd !important;")
+					if props.prodtype!="Industrial Minerals"
+						tr
+							td.td-title Mine Description:
+						tr
+							td.td-content=props.description
+						tr
+							td.td-title Company:					 
+						tr
+							td.td-content=props.company
+					tr
+						td.td-title(style="font-style: italic;")
+							a#view-page(href=props.url, style="text-decoration: underline; margin-right: 30px; cursor: pointer; font-weight: normal; color: #da70d6;", target="_blank") View Company Webpage
+
+			
